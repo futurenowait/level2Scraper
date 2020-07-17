@@ -1,11 +1,11 @@
 import websockets
-import zmq
 import asyncio
 import json
 
 
 from src.ConfigLoader import ConfigBase
 from src.ZeroMQ.ZeroMq_Handlers import Publisher
+
 
 class Stream(ConfigBase):
     def __init__(self,exchange):
@@ -24,12 +24,12 @@ class Stream(ConfigBase):
     async def _listen(self):
         pass
 
+
 class BitmexStream(Stream):
     def __init__(self):
 
         super().__init__("bitmex")
         self._build_wss_commands()
-        self._connect_to_zeromq()
 
     def _build_wss_commands(self):
 
@@ -43,11 +43,27 @@ class BitmexStream(Stream):
 
         self._wss_command = command_template
 
-    def _handle_data(self):
-        pass
-
     async def listen(self):
-        pass
+
+        async with websockets.connect(self._url) as websocket:
+            try:
+                while True:
+                    message = await websocket.recv()
+                    message = json.loads(message)
+
+                    if 'info' in message:
+                        print(message)
+                        await websocket.send(json.dumps(self._wss_command))
+
+                    elif 'table' in message:
+                        if message['action'] == "insert":
+
+                            if 'trade' == message['table']:
+                                self._publisher._send(message['data'],"trade.bitmex")
+
+
+            except Exception as error:
+                print(error)
 
 
 ### Not Implemented
@@ -56,8 +72,6 @@ class BinanceStream(Stream):
         super().__init__("binance")
 
         #self._build_wss_commands()
-        self._connect_to_zeromq()
-        self._listen()
 
     def _handle_data(self):
         pass
@@ -68,14 +82,13 @@ class BinanceStream(Stream):
     async def _listen(self):
         pass
 
+
 ### Not Implemented
 class DeribitStream(Stream):
     def __init__(self):
         super().__init__("deribit")
 
         # self._build_wss_commands()
-        self._connect_to_zeromq()
-        self._listen()
 
     def _handle_data(self):
         pass
@@ -89,4 +102,3 @@ class DeribitStream(Stream):
 
 ss = BitmexStream()
 asyncio.get_event_loop().run_until_complete(ss.listen())
-print()
