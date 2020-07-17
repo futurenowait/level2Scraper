@@ -2,13 +2,17 @@ import configparser
 import pkg_resources
 
 class ConfigBase(object):
-    def __init__(self,config_type,exchange=None):
-        self._load_config(config_type,exchange)
+    def __init__(self,config_type,exchange=None,test_mode=False):
+        if test_mode:
+            self._resource_path = pkg_resources.resource_filename("tests", "test_config.ini")
+        else:
+            self._resource_path = pkg_resources.resource_filename("src","config.ini")
+            self._load_config(config_type,exchange)
 
     def _streamer_section(self,section_name):
         config = configparser.ConfigParser()
-        resource_path = pkg_resources.resource_filename("src","config.ini")
-        config.read(resource_path)
+        config.read(self._resource_path)
+
 
         self._url = config.get(section_name,'url',
                                 fallback="{0} Section does not have {1} variable\n".format(section_name,"url"))
@@ -27,21 +31,36 @@ class ConfigBase(object):
                                               fallback="{0} Section does not have {1} variable\n"
                                               .format(section_name,"max_retry_connections"))
 
+        try:
+            self._retry_connections = int(self._retry_connections)
+        except Exception as error:
+            print(error)
+
     def _processor_section(self,section_name):
         config = configparser.ConfigParser()
-        resource_path = pkg_resources.resource_filename("src", "config.ini")
-        config.read(resource_path)
+        config.read(self._resource_path)
 
         self._batch_size = config.get(section_name,'batch_size',
                                        fallback="")
+
+        try:
+            self._batch_size = int(self._batch_size)
+        except Exception as error:
+            print(error)
+
         self._use_compression = \
-            True if config['DATA_PROCESS']['use_compression'].upper() == "TRUE" else False
-        self._aggregation_interval = config['DATA_PROCESS']['data_aggregation_interval']
+            True if config.get(section_name,"use_compression",fallback="false").upper() == "TRUE" else False
+        self._aggregation_interval = config.get(section_name,"data_aggregation_interval",
+                                                fallback=24)
+
+        try:
+            self._aggregation_interval = int(self._aggregation_interval)
+        except Exception as error:
+            print(error)
 
     def _zeromq_section(self):
         config = configparser.ConfigParser()
-        resource_path = pkg_resources.resource_filename("src", "config.ini")
-        config.read(resource_path)
+        config.read(self._resource_path)
 
         self._port = config.get("ZEROMQ","port",
                                 fallback="No valid port for ZeroMQ")
