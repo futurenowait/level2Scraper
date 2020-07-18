@@ -3,7 +3,7 @@ import os
 import pytest
 import configparser
 
-from src.ConfigLoader import ConfigBase
+from level2scraper.ConfigLoader import ConfigBase
 
 FILE_PATH = os.path.abspath("../")
 
@@ -29,7 +29,7 @@ def test_pkg_resource_path():
     regular_config = ConfigBase(config_type="not_relevant",exchange=None,test_mode=False)
     test_config = ConfigBase(config_type="not_relevant",exchange=None,test_mode=True)
 
-    assert  regular_config._resource_path == FILE_PATH+"/src/config.ini", "Wrong regular config file path"
+    assert  regular_config._resource_path == FILE_PATH+"/level2scraper/config.ini", "Wrong regular config file path"
     assert  test_config._resource_path == FILE_PATH+"/tests/test_config.ini", "Wrong test config file path"
 
 

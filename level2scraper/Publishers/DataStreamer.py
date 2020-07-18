@@ -3,26 +3,28 @@ import asyncio
 import json
 
 
-from src.ConfigLoader import ConfigBase
-from src.ZeroMQ.ZeroMq_Handlers import Publisher
+from level2scraper.ConfigLoader import ConfigBase
+from level2scraper.ZeroMQ.ZeroMq_Handlers import Publisher
 
 
 class Stream(ConfigBase):
     def __init__(self,exchange):
+        """
+        Base Object for Streamers. Inherits variables from ConfigBase that we construct using stream type. Then
+        runs ZeroMQ messaging channel
+
+        :type exchange: string
+        :param exchange: Used for loading correct configuration to object
+        """
         super().__init__("stream",exchange)
         self._connect_to_zeromq()
 
     def _connect_to_zeromq(self):
+        """
+        Initializing Publisher type of ZeroMQ client. Which will push data to subscribers. In our case to Data Processors
+        :return:
+        """
         self._publisher = Publisher()
-
-    def _handle_data(self):
-        def publish_data(data):
-            pass
-
-        pass
-
-    async def _listen(self):
-        pass
 
 
 class BitmexStream(Stream):
@@ -52,52 +54,16 @@ class BitmexStream(Stream):
                     message = json.loads(message)
 
                     if 'info' in message:
-                        print(message)
                         await websocket.send(json.dumps(self._wss_command))
 
                     elif 'table' in message:
                         if message['action'] == "insert":
 
                             if 'trade' == message['table']:
-                                self._publisher._send(message['data'],"trade.bitmex")
-
+                                self._publisher.send(message['data'], "trade.bitmex")
 
             except Exception as error:
                 print(error)
-
-
-### Not Implemented
-class BinanceStream(Stream):
-    def __init__(self):
-        super().__init__("binance")
-
-        #self._build_wss_commands()
-
-    def _handle_data(self):
-        pass
-
-    async def _callback(self):
-        pass
-
-    async def _listen(self):
-        pass
-
-
-### Not Implemented
-class DeribitStream(Stream):
-    def __init__(self):
-        super().__init__("deribit")
-
-        # self._build_wss_commands()
-
-    def _handle_data(self):
-        pass
-
-    async def _callback(self):
-        pass
-
-    async def _listen(self):
-        pass
 
 
 ss = BitmexStream()

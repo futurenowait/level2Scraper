@@ -1,6 +1,6 @@
 import zmq
 
-from src.ConfigLoader import ConfigBase
+from level2scraper.ConfigLoader import ConfigBase
 
 
 class Publisher(ConfigBase):
@@ -10,7 +10,7 @@ class Publisher(ConfigBase):
         self._socket = self._context.socket(zmq.PUB)
         self._socket.bind("tcp://*:{}".format(self._port))
 
-    def _send(self,data,topic):
+    def send(self, data, topic):
         self._socket.send_string("{0} {1}".format(topic, data))
 
     def _close(self):
