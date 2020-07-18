@@ -115,6 +115,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
  - [x] Basic Functionality
+ - [ ] Add More Tests
  - [ ] Monitoring Service
  - [ ] Logging
  - [ ] Reporting Through Telegram Bot
