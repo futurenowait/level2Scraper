@@ -33,7 +33,6 @@
 ## Table of Contents
 
 * [About the Project](#about-the-project)
-  * [Built With](#built-with)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
@@ -48,49 +47,59 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+Project started as simple websocket client for gathering market data. 
+Main purpose of this tool:
+* Handle connection to crypto exchanges
+* Process incoming data to simple csv format
 
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue.
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
+Of course, it's not perfect and needs more development, but at this time it serves it's purpose
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* python >= 3.6
+* pip
 ```sh
-npm install npm@latest -g
+sudo apt update
+sudo apt install python3 python3-pip
 ```
+
+Everything else will be handled by setuputils manager.
 
 ### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+ 
+1. Clone the repo
 ```sh
-git clone https://github.com/your_username_/Project-Name.git
+git clone https://github.com/futurenowait/level2Scraper.git
 ```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
-```
+:warning: **If you need other than default symbols**: Edit config.ini before running 3rd step!
 
+2. Edit ```level2scraper/config.ini```
+```sh
+
+[STREAM.BITMEX]
+
+    ### Websocket url, no need to change this
+    url = wss://www.bitmex.com/realtime
+
+    ### XBTUSD, ETHUSD, XRPUSD, ADAU20, BCHUSD, EOSU20, LTCU20, TRXU20 - Available symbols to choose from
+    ### Simple separate symbols with ,
+    symbols = XBTUSD,ETHUSD
+
+    
+    ### How many times socket will try to reconnect to server before throwing error
+    max_retry_connections = 10
+
+```
+3. Install required packages
+```sh
+sudo python3 setup.py install
+```
 
 
 <!-- USAGE EXAMPLES -->
