@@ -1,3 +1,6 @@
 venv/
 .idea/
 README.md
+level2scraper_pkq_futurenowait.egg-info/
+build/
+dist/
