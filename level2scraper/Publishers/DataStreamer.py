@@ -1,5 +1,4 @@
 import websockets
-import asyncio
 import json
 
 
@@ -54,17 +53,42 @@ class BitmexStream(Stream):
                     message = json.loads(message)
 
                     if 'info' in message:
+                        """
+                        Message looks like:
+                        {'info': 'Welcome to the BitMEX Realtime API.', 
+                        'version': '2020-07-14T21:30:54.000Z', 
+                        'timestamp': '2020-07-18T07:57:52.984Z', 
+                        'docs': 'https://www.bitmex.com/app/wsAPI', 
+                        'limit': {'remaining': 38}
+                        }
+                        """
+                        print(message['info'])
                         await websocket.send(json.dumps(self._wss_command))
 
                     elif 'table' in message:
                         if message['action'] == "insert":
 
                             if 'trade' == message['table']:
+                                """
+                                Message Looks Like:
+                                {'table': 'trade', 
+                                'action': 'insert', 
+                                'data': [
+                                    {'timestamp': '2020-07-18T08:01:48.052Z', 
+                                    'symbol': 'XBTUSD', 
+                                    'side': 'Sell', 
+                                    'size': 500, 
+                                    'price': 9136, 
+                                    'tickDirection': 'ZeroMinusTick', 
+                                    'trdMatchID': '00b2e350-d4de-89e1-23cb-d1be234af252', 
+                                    'grossValue': 5473000, 
+                                    'homeNotional': 0.05473, 
+                                    'foreignNotional': 500}
+                                    ]
+                                }
+
+                                """
                                 self._publisher.send(message['data'], "trade.bitmex")
 
             except Exception as error:
                 print(error)
-
-
-ss = BitmexStream()
-asyncio.get_event_loop().run_until_complete(ss.listen())
