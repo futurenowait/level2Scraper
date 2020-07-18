@@ -114,7 +114,10 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <!-- ROADMAP -->
 ## Roadmap
-
+ - [x] Basic Functionality
+ - [ ] Monitoring Service
+ - [ ] Logging
+ - [ ] Reporting Through Telegram Bot
 
 <!-- LICENSE -->
 ## License
